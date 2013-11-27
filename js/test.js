@@ -1,43 +1,68 @@
+/**
+ * ground class
+ * only animate...
+ */
 var Ground = function(filename) {
   this.sprite = new Lib.Sprite(filename, 36, 36);
-
-  this.update = function(){
+  
+  /**
+   *  draw ground
+   */
+  this.draw = function(context) {
     this.sprite.draw(context);
-  }
-
+  };
 };
 
+/**
+ * background class
+ */
 var Background = function(filename){
   this.sprite = new Lib.Sprite(filename, 256, 256);
-
-  this.update = function(){
+  
+  /**
+   * update background
+   */
+  this.update = function() {
     this.sprite.x -= 10;
-  }
-
-  this.draw = function(context){
+  };
+  
+  /**
+   * draw background
+   */
+  this.draw = function(context) {
     this.sprite.draw(context);
-  }
+  };
 };
 
-var DropFall = function(filename){
+/**
+ * Drop Fall Class
+ */
+var DropFall = function(filename) {
   this.sprite = new Lib.Sprite(filename, 36, 36);
   
 };
 
+/**
+ * Drop Fall's prototype
+ */
 DropFall.prototype = {
-
-  update: function(){
+  update: function() {
     this.sprite.draw(context);
   }
 };
 
-var Block = function(filename){
+/**
+ * Block Class
+ */
+var Block = function(filename) 
   this.sprite = new Lib.Sprite(filename, 36, 36);
 };
 
+/**
+ * Block's prototype
+ */
 Block.prototype = {
-
-  update: function(){
+  update: function() 
     this.sprite.draw(context);
   }
 };
