@@ -1,12 +1,19 @@
+/**
+ * ground class
+ * only animate...
+ */
 var Ground = function(filename) {
   this.sprite = new Lib.Sprite(filename, 36, 36);
-
-  this.update = function(){
+  
+  /**
+   *  draw ground
+   */
+  this.draw = function(context) {
     this.sprite.draw(context);
-  }
-
+  };
 };
 
+<<<<<<< HEAD
 /*
  *  プレイヤー
  */
@@ -74,35 +81,72 @@ var Background = function(filename, scroll){
 
   // 描画
   this.draw = function(context){
+=======
+/**
+ * background class
+ */
+var Background = function(filename){
+  this.sprite = new Lib.Sprite(filename, 256, 256);
+  
+  /**
+   * update background
+   */
+  this.update = function() {
+    this.sprite.x -= 10;
+  };
+  
+  /**
+   * draw background
+   */
+  this.draw = function(context) {
+>>>>>>> d6b2d38df503a6469c618a9acee67f07345474e1
     this.sprite.draw(context);
-  }
+  };
 };
 
+<<<<<<< HEAD
 /*
  *  落とし穴
  */
 var DropFall = function(filename){
+=======
+/**
+ * Drop Fall Class
+ */
+var DropFall = function(filename) {
+>>>>>>> d6b2d38df503a6469c618a9acee67f07345474e1
   this.sprite = new Lib.Sprite(filename, 36, 36);
   
 };
 
+/**
+ * Drop Fall's prototype
+ */
 DropFall.prototype = {
-
-  update: function(){
+  update: function() {
     this.sprite.draw(context);
   }
 };
 
+<<<<<<< HEAD
 /*
  *  ブロック
  */
 var Block = function(filename){
+=======
+/**
+ * Block Class
+ */
+var Block = function(filename) 
+>>>>>>> d6b2d38df503a6469c618a9acee67f07345474e1
   this.sprite = new Lib.Sprite(filename, 36, 36);
 };
 
+/**
+ * Block's prototype
+ */
 Block.prototype = {
-
-  update: function(){
+  update: function() 
     this.sprite.draw(context);
   }
 };
