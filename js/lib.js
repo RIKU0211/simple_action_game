@@ -990,6 +990,21 @@ Lib.Sprite.prototype = {
     }
 
     this.drawIndex(context, sequence[this.sequence_counter]);
+  },
+  /**
+   * animate "freely" to sequence container
+   * @param line_number -> 1
+   * @param ary -> [0, 1, 2, 1]
+   */
+  animationFree: function(context, line_number, sequence) {
+    this.timer += 1;
+    if(this.timer % this.next_sprite_time == 0) {
+      this.sequence_counter += 1;
+      this.sequence_counter = (this.sequence_counter == sequence.length) ? 0 : this.sequence_counter;
+      this.timer = 0;
+    }
+
+    this.drawIndex(context, sequence[this.sequence_counter], line_number);
   }
 };
 
