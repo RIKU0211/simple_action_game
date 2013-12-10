@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>scroll_action</title>
+  <script type="text/javascript" src="js/lib.js"></script>
+  <script type="text/javascript" src="js/RequestAnimationFrame.js"></script>
+  <script type="text/javascript" src="js/test.js"></script>
+</head>
+<body>
+  <!-- 画面サイズ -->
+  <canvas id="canvas_" width="800" height="300"></canvas>
+
+  <script type="text/javascript">
+    var canvas = null;
+    var context = null;
+    var bg = null;
+    var bg2 = null;
+    var player = null;
+    var snd = null;
+
+    var enemies = [];
+    var timer = 0;
+    var next = Lib.MathUtility.random(80, 180);
+
+    var input = Lib.InputManager.getInstance();
+
+    var t1 = new Lib.Circle(new Lib.Vec2(0, 0), 15);
+    var t2 = [];
+
+
+
+    function initialize(){
+      canvas = document.getElementById("canvas_");
+      context = canvas.getContext("2d");
+
+      // 背景
+      bg = new Background("img/bg.png", null);
+      bg2 = new Background("img/bg.png", 1);
+
+      // プレイヤー
+      player = new Player("img/player.png")
+      player.initialize();
+
+      enemies.push(new Enemy());
+      t2.push(new Lib.Circle(new Lib.Vec2(0, 0), 15));
+
+      snd = new Sound();
+      snd.initialize();
+      snd.play();
+
+      window.addEventListener("keydown", function(e) {
+        if(e.keyCode == input.getKey("UP")) {
+          player.jump();
+        }
+
+        if(e.keyCode == input.getKey("P")) {
+          snd.play();
+        }
+
+        if(e.keyCode == input.getKey("SPACE")) {
+          snd.pause();
+        }
+      });
+    };
+
+    function update(){
+      requestAnimationFrame(update);
+
+      context.globalCompositeOperation = "source-over";
+      context.fillStyle = "black";
+      context.fillRect(0, 0, canvas.width, canvas.height);
+
+      // 背景描画
+      bg.update();
+      bg.draw(context);
+      bg2.update();
+      bg2.draw(context);
+
+      // プレイヤー描画
+      player.update();
+      player.draw(context);
+      t1.center.x = player.sprite.x + 15;
+      t1.center.y = player.sprite.y + 30;
+
+      timer += 1;
+      if(timer % next == 0) {
+        enemies.push(new Enemy());
+        t2.push(new Lib.Circle(new Lib.Vec2(0, 0), 15));
+        next = Lib.MathUtility.random(80, 180);
+      }
+
+      for(var i = 0; i < t2.length; i += 1) {
+        enemies[i].draw(context);
+        t2[i].center.x = enemies[i].sprite.x + 17;
+        t2[i].center.y = enemies[i].sprite.y + 20;
+      }
+
+      for(var i = 0; i < t2.length; i += 1) {
+        if(t2[i].collisionCircle(t1)) {
+          t2.splice(i, 1);
+          enemies.splice(i, 1);
+        }
+      }
+    };
+
+    initialize();
+    update();
+  </script>
+  
+</body>
+</html>
