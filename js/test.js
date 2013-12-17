@@ -18,10 +18,10 @@ var Ground = function(filename) {
  *  プレイヤー
  */
 var Player = function(filename){
-  this.sprite = new Lib.Sprite(filename, 96, 192, 32, 48);
-  var manager = Lib.InputManager.getInstance();
-  var position = new Lib.Vec2(250, 250);
-  var timer = 0;
+  this.sprite = new Lib.Sprite(filename, 384, 384, 32, 48);
+  this.sprite.next_sprite_time = 15;
+  this.timer = 0;
+  this.is_jump = false;
   
   this.initialize = function(){
     this.sprite.x = 50;
@@ -29,40 +29,79 @@ var Player = function(filename){
   }
 
   this.update = function(){
+    if(this.is_jump){
+      this.timer += 0.115;
+      this.sprite.y = Lib.ActionUtility.jumpToVertical(this.sprite.y, this.timer, 4.0);
 
-    canvas.addEventListener("keydown", function(e) {
-      if(manager.getKey("UP") == e.keyCode) {
-        // ジャンプ処理
-        position.y = Lib.ActionUtility.jumpToVertical(position.y, timer);
+      if(this.sprite.y > 252){
+        this.sprite.y = 252;
+        this.is_jump = false;
+        this.timer = 0;
       }
-    });
-
-    timer += 0.5;
-
+    }
   }
 
   this.draw = function(){
-    this.sprite.animation(context, 2);
+    this.sprite.animationFree(context, 2, [0, 1, 2, 1]);
+  };
+
+  this.jump = function(){
+    this.is_jump = true;
+  };
+};
+
+/*
+ *  Enemy
+ */
+var Enemy = function(filename){
+  this.sprite = new Lib.Sprite(filename, 32, 32);
+  this.sprite.x = 800;
+  this.sprite.y = 268;
+}
+
+Enemy.prototype = {
+  draw: function(){
+    this.sprite.x -=5;
+
+    this.sprite.draw(context);
   }
 };
 
 /*
- *  背景
+ *  Fall
+ */
+var Fall = function(filename){
+  this.sprite = new Lib.Sprite(filename, 64, 8);
+  this.sprite.x = 800;
+  this.sprite.y = 292;
+}
+
+Fall.prototype = {
+  draw: function(){
+    this.sprite.x -=5;
+
+    this.sprite.draw(context);
+  }
+};
+
+/*
+ *  Background
  */
 var Background = function(filename, scroll){
-  this.sprite = new Lib.Sprite(filename, 256, 256);
+  this.sprite = new Lib.Sprite(filename, 800, 600);
+
   if (scroll == 1) {
-    this.sprite.x += 800;
+    this.sprite.x += this.sprite.src_w;
   }
 
   // 更新
   this.update = function(){
     // 画像のスクロールスピード調整
-    this.sprite.x -= 5;
+    this.sprite.x -= 2;
 
     // スクロール処理
-    if(this.sprite.x == -800){
-      this.sprite.x += 1600;
+    if(this.sprite.x == -this.sprite.src_w){
+      this.sprite.x += this.sprite.src_w*2;
     }
   }
 
@@ -74,23 +113,30 @@ var Background = function(filename, scroll){
   };
 };
 
+/*  
+ *  BGM
+ */
 var Sound = function(){
-  var manager = Lib.AudioManager.getInstance();
+  var sndManager = Lib.AudioManager.getInstance();
+  var keyManager = Lib.InputManager.getInstance();
+  var is_snd = false;
 
   this.initialize = function(){
-    manager.add("snd/test.mp3", "test");
-    manager.setLoop(true);
+    sndManager.add("snd/test.mp3", "test");
+    sndManager.setLoop("test");
   }
 
   this.play = function(){
-    manager.play("test");
+    // 再生
+    if (is_snd) {
+      sndManager.play("test");
 
-    canvas.addEventListener("keydown", function(e) {
-      if(manager.getKey("SPACE") == e.keyCode) {
-        // 一時停止
-        manager.pause("test");
-      }
-    });
+      is_snd = false;
+    }else{
+      sndManager.stop("test");
+
+      is_snd = true;
+    }
   }
 };
 

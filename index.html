@@ -17,22 +17,48 @@
     var bg = null;
     var bg2 = null;
     var player = null;
+    var enemy = [];
+    var fall = [];
+
     var snd = null;
+
+    var timer = 0;
+    var next = Lib.MathUtility.random(80, 180);
+
+    var input = Lib.InputManager.getInstance();
 
     function initialize(){
       canvas = document.getElementById("canvas_");
       context = canvas.getContext("2d");
 
       // 背景
-      bg = new Background("img/bg.jpg", null);
-      bg2 = new Background("img/bg.jpg", 1);
+      bg = new Background("img/bg.png", null);
+      bg2 = new Background("img/bg.png", 1);
 
       // プレイヤー
-      player = new Player("img/player.png")
+      player = new Player("img/chara.png");
       player.initialize();
 
+      // enemy
+      enemy.push(new Enemy("img/enemy.png"));
+
+      // fall
+      fall.push(new Fall("img/fall.png"));
+      
       snd = new Sound();
       snd.initialize();
+
+      // key event
+      window.addEventListener("keydown", function(e) {
+        if(e.keyCode == input.getKey("SPACE")) {
+          player.jump();
+        }
+
+        if(e.keyCode == input.getKey("S")){
+          // BGM play or stop
+          snd.play();
+        }
+      });
 
     };
 
@@ -43,23 +69,53 @@
       context.fillStyle = "black";
       context.fillRect(0, 0, canvas.width, canvas.height);
 
-      // 背景描画
+      // draw Background
       bg.update();
       bg.draw(context);
       bg2.update();
       bg2.draw(context);
 
-      // プレイヤー描画
+      // draw Player
       player.update();
       player.draw(context);
 
-      snd.play();
+      timer += 1;
+
+      if(timer % next == 0){
+        enemy.push(new Enemy("img/enemy.png"));
+        fall.push(new Fall("img/fall.png")); 
+      }
+
+
+      for(var i = 0; i < enemy.length; i++){
+        enemy[i].draw(context);
+        
+        if ( (player.sprite.x+32) >= enemy[i].sprite.x && player.sprite.x <= (enemy[i].sprite.x+32) 
+                && (player.sprite.y+48) >= enemy[i].sprite.y && player.sprite.y <= (enemy[i].sprite.y+32) ) {
+          enemy.splice(i, 1);
+          console.log("colllision");
+        };
+      }
+
+      for(var i = 0; i < fall.length; i++){
+        fall[i].draw(context);
+
+        if ( (player.sprite.x+32) >= fall[i].sprite.x && player.sprite.x <= (fall[i].sprite.x + 64)
+                && (player.sprite.y+48) >= fall[i].sprite.y) {
+          fall.splice(i, 1);
+          console.log("fall collision");
+        };
+
+      }
+
 
     };
 
     initialize();
     update();
   </script>
+
+  <p>”S”でBGM ON/OFF</p>
   
 </body>
 </html>
